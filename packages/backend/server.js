@@ -1,94 +1,55 @@
+const { randomBytes } = require("crypto");
 const express = require("express");
 const app = express();
+
 const server = require("http").createServer(app);
+
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
   },
 });
+
 const port = process.env.PORT || 4000;
 
 server.listen(port, () => {
   console.log("Server listening at port http://localhost:%d", port);
 });
 
-const randomId = () => crypto.randomBytes(8).toString("hex");
-
 let numUsers = 0;
 
 io.on("connection", (socket) => {
   let addedUser = false;
-  console.log("user connected");
 
-  io.emit("count", {
-    numUsers: numUsers,
-  });
+  ++numUsers;
+  addedUser = true;
 
-  // when the client emits 'new message', this listens and executes
-  socket.on("new message", (data) => {
-    // we tell the client to execute 'new message'
-    socket.broadcast.emit("new message", {
-      username: socket.username,
-      message: data,
-    });
-  });
+  socket.emit("user:join", { users_count: numUsers });
 
-  socket.on("create room", (data) => {
-    const roomId = randomId();
-
+  socket.on("room:create", (data) => {
+    const roomId = randomBytes(2).toString("hex");
     socket.join(roomId);
-    socket.room = room;
+    socket.room = roomId;
 
-    socket.emit("join room", {
-      numUsers: numUsers,
-    });
+    socket.emit("room:join", { room_id: roomId });
   });
 
-  // when the client emits 'add user', this listens and executes
-  socket.on("add user", ({ username }) => {
-    if (addedUser) return;
-
-    console.log(username);
-
-    // we store the username in the socket session for this client
-    socket.username = username;
-    ++numUsers;
-    addedUser = true;
-    socket.emit("login", {
-      numUsers: numUsers,
-    });
-    io.emit("count", {
-      numUsers: numUsers,
-    });
-    // echo globally (all clients) that a person has connected
-    socket.broadcast.emit("user joined", {
-      username: socket.username,
-      numUsers: numUsers,
-    });
+  socket.on("room:join", (data) => {
+    socket.join(data.room_id);
+    socket.room = data.room_id;
+    socket.emit("room:join", { room_id: data.room_id });
   });
 
-  // when the client emits 'typing', we broadcast it to others
-  socket.on("typing", () => {
-    socket.broadcast.emit("typing", {
-      username: socket.username,
-    });
+  socket.on("message", (data) => {
+    io.to(socket.room).emit("user:message", { text: data.text });
   });
 
-  // when the client emits 'stop typing', we broadcast it to others
-  socket.on("stop typing", () => {
-    socket.broadcast.emit("stop typing", {
-      username: socket.username,
-    });
-  });
-
-  // when the user disconnects.. perform this
   socket.on("disconnect", () => {
     if (addedUser) {
       --numUsers;
 
-      // echo globally that this client has left
-      socket.broadcast.emit("user left", {
+      socket.broadcast.emit("user:left", {
         username: socket.username,
         numUsers: numUsers,
       });
