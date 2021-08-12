@@ -17,10 +17,6 @@ const randomId = () => crypto.randomBytes(8).toString("hex");
 
 let numUsers = 0;
 
-app.get("/users", (req, res) => {
-  res.json({ count: numUsers });
-});
-
 io.on("connection", (socket) => {
   let addedUser = false;
   console.log("user connected");

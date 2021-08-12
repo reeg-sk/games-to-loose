@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import io from "socket.io-client";
-
-const socket = io("localhost:4000", { autoConnect: false });
+import { Continue, New, Planet } from "../components/icons";
 
 export default function Home() {
   const [creating, setCreating] = useState(false);
@@ -79,6 +78,7 @@ export default function Home() {
                 createGame();
               }}
             >
+              <Planet />
               <h2 className="text-3xl mb-3">What's your name?</h2>
               <input
                 type="text"
@@ -93,9 +93,9 @@ export default function Home() {
               />
               <button
                 type="submit"
-                className="mt-4 my-2 py-2 px-6 rounded-sm bg-red-700 hover:bg-red-600"
+                className="mt-3 my-2 py-2 px-6 rounded-sm bg-red-700 hover:bg-red-600"
               >
-                Continue
+                Continue <Continue />
               </button>
             </form>
           </div>
@@ -111,7 +111,8 @@ export default function Home() {
           className="bg-green-700 hover:bg-green-600 py-2 px-6 rounded-sm"
           onClick={() => createGame()}
         >
-          Create room
+          Create room{" "}
+          <New />
         </button>
         <p className="text-center mt-2 text-sm">{count} active users</p>
       </div>
