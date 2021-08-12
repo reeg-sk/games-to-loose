@@ -1,0 +1,11 @@
+{
+  "name": "games-to-loose",
+  "version": "1.0.0",
+  "repository": "git@github.com:reeg-sk/games-to-loose.git",
+  "author": "Andrej Kažmirský",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}
