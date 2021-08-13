@@ -20,10 +20,7 @@ server.listen(port, () => {
 let numUsers = 0;
 
 io.on("connection", (socket) => {
-  let addedUser = false;
-
   ++numUsers;
-  addedUser = true;
 
   io.sockets.emit("user:join", { usersCount: numUsers });
 
@@ -49,13 +46,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    if (addedUser) {
-      --numUsers;
+    --numUsers;
 
-      socket.broadcast.emit("user:left", {
-        username: socket.username,
-        numUsers: numUsers,
-      });
-    }
+    socket.broadcast.emit("user:left", {
+      usersCount: numUsers,
+    });
   });
 });

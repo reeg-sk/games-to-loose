@@ -14,6 +14,10 @@
     activeUsers = data.usersCount;
   });
 
+  socket.on("user:left", (data) => {
+    activeUsers = data.usersCount;
+  });
+
   socket.on("room:join", (data) => {
     // nothing yet
   });
