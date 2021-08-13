@@ -25,12 +25,15 @@ io.on("connection", (socket) => {
   ++numUsers;
   addedUser = true;
 
-  socket.emit("user:join", { users_count: numUsers });
+  io.sockets.emit("user:join", { usersCount: numUsers });
 
   socket.on("room:create", (data) => {
-    const roomId = randomBytes(2).toString("hex");
+    if (socket.room) return;
+
+    const roomId = randomBytes(3).toString("hex");
     socket.join(roomId);
     socket.room = roomId;
+    socket.username = data.username;
 
     socket.emit("room:join", { room_id: roomId });
   });
