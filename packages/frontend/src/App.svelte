@@ -59,8 +59,8 @@
     <Logo />
     <h1 class="font-bold text-4xl">Games To L<s>oo</s>se</h1>
   </div>
-  <div class="py-2">
-    <h2 class="text-lg text-center mb-4 ">
+  <div class="py-2 text-center">
+    <h2 class="text-lg mb-4 ">
       👋 Hello <b>{$username}</b>!
     </h2>
     <button
@@ -70,7 +70,7 @@
     >
       Create room <New />
     </button>
-    <p class="text-center mt-2 text-sm">
+    <p class="mt-2 text-sm">
       {activeUsers} active {activeUsers == 1 ? "user" : "users"}
     </p>
   </div>
